@@ -22,7 +22,7 @@ CREATE TABLE reviews (
   reported BOOLEAN DEFAULT false,
   reviewer_name VARCHAR(20) NOT NULL,
   reviewer_email VARCHAR(30) NOT NULL,
-  response VARCHAR(150),
+  response VARCHAR(150) DEFAULT NULL,
   helpfulness SMALLINT DEFAULT 0,
   PRIMARY KEY (id)
 );
