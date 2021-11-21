@@ -111,8 +111,51 @@ module.exports = {
                 'true': 0,
                 'false': 0,
               },
-              // characteristics = {},
+              characteristics: {},
             }
+
+            console.log(reviews)
+            reviews.forEach(review => {
+              response.ratings[`${review.rating}`] ++;
+              if (review.recommend === 0) {
+                response.recommended.false ++;
+              } else {
+                response.recommended.true ++;
+              }
+            });
+
+            function replace(response){
+              Object.keys(response).forEach(function(key){
+                typeof response[key] === 'object' ? replace(response[key]) : response[key]= String(response[key]);
+              });
+            }
+            replace(response)
+
+            let valueTracker = {};
+
+            characteristics.forEach(characteristic => {
+              if (!response.characteristics[characteristic.name]){
+                response.characteristics[characteristic.name] = {
+                  id: characteristic.id
+                };
+              }
+
+              if (!valueTracker[characteristic.name]) {
+                valueTracker[characteristic.name] = {
+                  count: 0,
+                  sum: 0,
+                }
+              }
+
+              valueTracker[characteristic.name].count ++;
+              valueTracker[characteristic.name].sum += characteristic.value;
+            })
+
+            for (let key in valueTracker) {
+              let avg = valueTracker[key].sum / valueTracker[key].count;
+              response.characteristics[key].value = `${avg}`;
+            }
+
 
             callback(null, response);
           }
