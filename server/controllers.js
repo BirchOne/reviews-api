@@ -10,6 +10,7 @@ module.exports = {
       }
     });
   },
+
   getMeta: function (req, res) {
     models.getMeta(req, res, (err, results) => {
       if (err) {
@@ -19,6 +20,7 @@ module.exports = {
       }
     });
   },
+
   postReview: function (req, res) {
     models.postReview(req, res, (err) => {
       if (err) {
@@ -28,21 +30,23 @@ module.exports = {
       }
     })
   },
+
   addHelpful: function (req, res) {
     models.addHelpful(req, res, (err) => {
       if (err) {
         res.status(500).send(err);
       } else {
-        res.status(204).send('Review was marked as helpful!');
+        res.status(204).send();
       }
     })
   },
+
   reportReview: function (req, res) {
     models.reportReview(req, res, (err) => {
       if (err) {
         res.status(500).send(err);
       } else {
-        res.status(204).send('Review successfully reported');
+        res.status(204).send();
       }
     })
   }

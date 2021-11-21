@@ -10,7 +10,7 @@ app.get('/meta', function (req, res) {
   controllers.getMeta(req, res);
 });
 
-app.post('/', function (req, res) {
+app.post('/create', function (req, res) {
   controllers.postReview(req, res);
 })
 
