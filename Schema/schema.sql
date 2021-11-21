@@ -48,33 +48,8 @@ CREATE TABLE photos (
     REFERENCES reviews(id)
 );
 
--- CREATE TABLE products (
---   id INTEGER NOT NULL AUTO_INCREMENT,
---   PRIMARY KEY (id)
--- );
+CREATE INDEX product_id_idx ON reviews (product_id);
+CREATE INDEX review_id_idx ON photos (review_id);
 
--- CREATE TABLE ratings (
---   id INTEGER NOT NULL AUTO_INCREMENT,
---   product_id INTEGER NOT NULL,
---   `1` SMALLINT DEFAULT 0,
---   `2` SMALLINT DEFAULT 0,
---   `3` SMALLINT DEFAULT 0,
---   `4` SMALLINT DEFAULT 0,
---   `5` SMALLINT DEFAULT 0,
---   PRIMARY KEY (id),
---   FOREIGN KEY (product_id)
---     REFERENCES products(id)
--- );
-
--- CREATE TABLE recommended (
---   id INTEGER NOT NULL AUTO_INCREMENT,
---   product_id INTEGER NOT NULL,
---   `true` SMALLINT DEFAULT 0,
---   `false` SMALLINT DEFAULT 0,
---   PRIMARY KEY (id),
---   FOREIGN KEY (product_id)
---     REFERENCES products(id)
--- );
-
-INSERT INTO reviews(product_id, rating, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness)
-  VALUES(2, 5, 'This is a test', 'And I liked it', true, false, 'jonhirak', 'jonhirak@email.com', 'I hope it worked!', 4);
+-- INSERT INTO reviews(product_id, rating, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness)
+--   VALUES(2, 5, 'This is a test', 'And I liked it', true, false, 'jonhirak', 'jonhirak@email.com', 'I hope it worked!', 4);
