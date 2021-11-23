@@ -1,25 +1,32 @@
 const express = require('express');
-const controllers = require('./controllers.js');
-const app = express();
+const controllers = require('./controllers');
 
-app.get('/', function (req, res) {
+const app = express();
+app.use(express.json());
+// app.use(express.urlencoded());
+
+app.get('/', (req, res) => {
   controllers.getReviews(req, res);
 });
 
-app.get('/meta', function (req, res) {
+app.get('/meta', (req, res) => {
   controllers.getMeta(req, res);
 });
 
-app.post('/create', function (req, res) {
+app.post('/create', (req, res) => {
   controllers.postReview(req, res);
-})
+});
 
-app.put('/:review_id/helpful', function (req, res) {
+app.put('/:review_id/helpful', (req, res) => {
   controllers.addHelpful(req, res);
-})
+});
 
-app.put('/:review_id/report', function (req, res) {
+app.put('/:review_id/report', (req, res) => {
   controllers.reportReview(req, res);
-})
+});
 
-app.listen(8080)
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(8080);
+}
+
+module.exports = app;

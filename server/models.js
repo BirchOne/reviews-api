@@ -1,22 +1,22 @@
-const {connection} = require('./db.js');
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable camelcase */
+/* eslint-disable no-shadow */
+/* eslint-disable no-param-reassign */
+const { connection } = require('./db');
 
 module.exports = {
-  getReviews: function (req, res, callback) {
-    let {product_id, page, count, sort} = req.query;
+  getReviews(req, res, callback) {
+    const { product_id } = req.query;
+    const page = req.query.page || 1;
+    const count = req.query.count || 5;
+
     let offset = 0;
 
-    if (!count) {
-      count = 5;
-    }
-    if (!page) {
-      page = 1;
-    }
     if (page > 1) {
-      offset = count * (page -1);
+      offset = count * (page - 1);
     }
 
-    let queryString =
-    `SELECT * FROM reviews
+    let queryString = `SELECT * FROM reviews
     WHERE reviews.product_id = ${product_id}
     AND reviews.reported = ${false}
     ORDER BY reviews.helpfulness DESC
@@ -26,8 +26,7 @@ module.exports = {
       if (err) {
         callback(err);
       } else {
-
-        reviews.forEach(review => {
+        reviews.forEach((review) => {
           review.photos = [];
           if (review.response === 'null') {
             review.response = null;
@@ -44,8 +43,7 @@ module.exports = {
           delete review.reviewer_email;
         });
 
-        queryString =
-          `SELECT photos.id, photos.review_id, photos.url
+        queryString = `SELECT photos.id, photos.review_id, photos.url
           FROM photos
           INNER JOIN reviews ON photos.review_id = reviews.id
           WHERE reviews.product_id = ${product_id}`;
@@ -54,89 +52,87 @@ module.exports = {
           if (err) {
             callback(err);
           } else {
-            urls.forEach(item => {
-              reviews.forEach(review => {
+            urls.forEach((item) => {
+              reviews.forEach((review) => {
                 if (review.review_id === item.review_id) {
                   delete item.review_id;
                   review.photos.push(item);
                 }
-              })
-            })
+              });
+            });
 
-            let response = {
+            const response = {
               product: product_id,
-              page: parseInt(page),
-              count: parseInt(count),
-              results: reviews
-            }
+              page: parseInt(page, 10),
+              count: parseInt(count, 10),
+              results: reviews,
+            };
 
-            callback(null, response)
+            callback(null, response);
           }
-        })
+        });
       }
-    })
+    });
   },
 
-  getMeta: function (req, res, callback) {
-    const {product_id} = req.query;
-    let queryString =
-    `SELECT * FROM reviews
+  getMeta(req, res, callback) {
+    const { product_id } = req.query;
+    let queryString = `SELECT * FROM reviews
     WHERE reviews.product_id = ${product_id}
     AND reviews.reported = ${false}`;
+
+    function replace(response) {
+      Object.keys(response).forEach((key) => {
+        // eslint-disable-next-line no-unused-expressions
+        typeof response[key] === 'object' ? replace(response[key]) : response[key] = String(response[key]);
+      });
+    }
 
     connection.query(queryString, (err, reviews) => {
       if (err) {
         callback(err);
       } else {
-        queryString =
-        `SELECT characteristics.name, characteristic.value, characteristics.id FROM characteristics
+        queryString = `SELECT characteristics.name, characteristic.value, characteristics.id FROM characteristics
         INNER JOIN characteristic on characteristics.id = characteristic.characteristic_id
         WHERE characteristics.product_id = ${product_id}`;
-
 
         connection.query(queryString, (err, characteristics) => {
           if (err) {
             callback(err);
           } else {
-            let response = {
+            const response = {
               product_id,
               ratings: {
-                '1': 0,
-                '2': 0,
-                '3': 0,
-                '4': 0,
-                '5': 0,
+                1: 0,
+                2: 0,
+                3: 0,
+                4: 0,
+                5: 0,
               },
               recommended: {
-                'true': 0,
-                'false': 0,
+                true: 0,
+                false: 0,
               },
               characteristics: {},
-            }
+            };
 
-            console.log(reviews)
-            reviews.forEach(review => {
-              response.ratings[`${review.rating}`] ++;
+            reviews.forEach((review) => {
+              response.ratings[`${review.rating}`] += 1;
               if (review.recommend === 0) {
-                response.recommended.false ++;
+                response.recommended.false += 1;
               } else {
-                response.recommended.true ++;
+                response.recommended.true += 1;
               }
             });
 
-            function replace(response){
-              Object.keys(response).forEach(function(key){
-                typeof response[key] === 'object' ? replace(response[key]) : response[key]= String(response[key]);
-              });
-            }
-            replace(response)
+            replace(response);
 
-            let valueTracker = {};
+            const valueTracker = {};
 
-            characteristics.forEach(characteristic => {
-              if (!response.characteristics[characteristic.name]){
+            characteristics.forEach((characteristic) => {
+              if (!response.characteristics[characteristic.name]) {
                 response.characteristics[characteristic.name] = {
-                  id: characteristic.id
+                  id: characteristic.id,
                 };
               }
 
@@ -144,36 +140,43 @@ module.exports = {
                 valueTracker[characteristic.name] = {
                   count: 0,
                   sum: 0,
-                }
+                };
               }
 
-              valueTracker[characteristic.name].count ++;
+              valueTracker[characteristic.name].count += 1;
               valueTracker[characteristic.name].sum += characteristic.value;
-            })
+            });
 
-            for (let key in valueTracker) {
-              let avg = valueTracker[key].sum / valueTracker[key].count;
+            // eslint-disable-next-line guard-for-in
+            for (const key in valueTracker) {
+              const avg = valueTracker[key].sum / valueTracker[key].count;
               response.characteristics[key].value = `${avg}`;
             }
 
-
             callback(null, response);
           }
-        })
+        });
       }
-    })
+    });
   },
 
-  postReview: function (req, res, callback) {
-    const {product_id, rating, summary, body, recommend, name, email} = req.query;
-    let photos = JSON.parse(req.query.photos);
-    // console.log(req.query.characteristics)
-    let characteristics = JSON.parse(req.query.characteristics);
+  postReview(req, res, callback) {
+    console.log('TESTTTTT!!!: ' + JSON.stringify(req.body))
+    const {
+      product_id, rating, recommend, photos, characteristics
+    } = req.body;
+    let { summary, body, name, email } = req.body;
 
-    let queryString =
-      `INSERT INTO
+    summary = summary.replace(/'/g, "\\'");
+    body = body.replace(/'/g, "\\'");
+    name = name.replace(/'/g, "\\'");
+    email = email.replace(/'/g, "\\'");
+
+    let queryString = `INSERT INTO
       reviews (product_id, rating, summary, body, recommend, reviewer_name, reviewer_email)
       VALUES (${product_id}, ${rating}, '${summary}', '${body}', ${recommend}, '${name}', '${email}')`;
+
+      console.log(queryString)
 
     connection.query(queryString, (err) => {
       if (err) {
@@ -186,87 +189,80 @@ module.exports = {
           } else {
             review_id = review_id[0]['LAST_INSERT_ID()'];
             if (Object.keys(characteristics).length > 0) {
-              const constructCharQuery = function(characteristics) {
-                let values = [];
-                for (let key in characteristics) {
-                  values.push(`(${key}, ${review_id}, ${characteristics[key]})`)
+              const constructCharQuery = function (characteristics) {
+                const values = [];
+                // eslint-disable-next-line guard-for-in
+                for (const key in characteristics) {
+                  values.push(`(${key}, ${review_id}, ${characteristics[key]})`);
                 }
                 return values.join(',');
-              }
-              queryString =
-                `INSERT INTO characteristic (characteristic_id, review_id, value)
-                VALUES` + constructCharQuery(characteristics);
+              };
+              queryString = `INSERT INTO characteristic (characteristic_id, review_id, value)
+                VALUES${constructCharQuery(characteristics)}`;
+
+              connection.query(queryString, (err) => {
+                if (err) {
+                  callback(err);
+                } else if (photos.length > 0) {
+                  const constructPhotosQuery = function (photos) {
+                    const values = [];
+                    photos.forEach((url) => {
+                      values.push(`(${review_id}, '${url}')`);
+                    });
+                    return values.join(',');
+                  };
+
+                  const value = constructPhotosQuery(photos);
+
+                  queryString = `INSERT INTO
+                    photos (review_id, url)
+                    VALUES ${value}`;
+
+                  connection.query(queryString, (err) => {
+                    if (err) {
+                      callback(err);
+                    } else {
+                      callback();
+                    }
+                  });
+                } else {
+                  callback();
+                }
+              });
+            } else if (photos.length > 0) {
+              const constructPhotosQuery = function (photos) {
+                const values = [];
+                photos.forEach((url) => {
+                  values.push(`(${review_id}, '${url}')`);
+                });
+                return values.join(',');
+              };
+
+              const value = constructPhotosQuery(photos);
+
+              queryString = `INSERT INTO
+                photos (review_id, url)
+                VALUES ${value}`;
 
               connection.query(queryString, (err) => {
                 if (err) {
                   callback(err);
                 } else {
-                  if(photos.length > 0) {
-                    const constructPhotosQuery = function (photos) {
-                      let values = [];
-                      photos.forEach(url => {
-                        values.push(`(${review_id}, '${url}')`);
-                      });
-                      return values.join(',');
-                    };
-
-                    const value = constructPhotosQuery(photos)
-
-                    queryString =
-                    `INSERT INTO
-                    photos (review_id, url)
-                    VALUES ${value}`;
-
-                    connection.query(queryString, (err) => {
-                      if (err) {
-                        callback(err);
-                      } else {
-                        callback();
-                      }
-                    })
-                  } else {
-                    callback();
-                  }
+                  callback();
                 }
-              })
+              });
             } else {
-              if(photos.length > 0) {
-                const constructPhotosQuery = function (photos) {
-                  let values = [];
-                  photos.forEach(url => {
-                    values.push(`(${review_id}, '${url}')`);
-                  });
-                  return values.join(',');
-                };
-
-                const value = constructPhotosQuery(photos)
-
-                queryString =
-                `INSERT INTO
-                photos (review_id, url)
-                VALUES ${value}`;
-
-                connection.query(queryString, (err) => {
-                  if (err) {
-                    callback(err);
-                  } else {
-                    callback();
-                  }
-                })
-              } else {
-                callback();
-              }
+              callback();
             }
           }
-        })
+        });
       }
-    })
+    });
   },
 
-  addHelpful: function (req, res, callback) {
-    const {review_id} = req.params;
-    const queryString =
-      `UPDATE reviews
+  addHelpful(req, res, callback) {
+    const { review_id } = req.params;
+    const queryString = `UPDATE reviews
       SET helpfulness = helpfulness + 1
       WHERE id = ${review_id}`;
 
@@ -276,13 +272,12 @@ module.exports = {
       } else {
         callback();
       }
-    })
+    });
   },
 
-  reportReview: function (req, res, callback) {
-    const {review_id} = req.params;
-    const queryString =
-      `UPDATE reviews
+  reportReview(req, res, callback) {
+    const { review_id } = req.params;
+    const queryString = `UPDATE reviews
       SET reported = true
       WHERE id = ${review_id}`;
 
@@ -292,6 +287,6 @@ module.exports = {
       } else {
         callback();
       }
-    })
-  }
+    });
+  },
 };

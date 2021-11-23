@@ -1,7 +1,7 @@
-const models = require('./models.js');
+const models = require('./models');
 
 module.exports = {
-  getReviews: function (req, res) {
+  getReviews(req, res) {
     models.getReviews(req, res, (err, results) => {
       if (err) {
         res.status(500).send(err);
@@ -11,7 +11,7 @@ module.exports = {
     });
   },
 
-  getMeta: function (req, res) {
+  getMeta(req, res) {
     models.getMeta(req, res, (err, results) => {
       if (err) {
         res.status(500).send(err);
@@ -21,33 +21,33 @@ module.exports = {
     });
   },
 
-  postReview: function (req, res) {
+  postReview(req, res) {
     models.postReview(req, res, (err) => {
       if (err) {
         res.status(500).send(err);
       } else {
         res.status(201).send('Your review was successfully posted!');
       }
-    })
+    });
   },
 
-  addHelpful: function (req, res) {
+  addHelpful(req, res) {
     models.addHelpful(req, res, (err) => {
       if (err) {
         res.status(500).send(err);
       } else {
         res.status(204).send();
       }
-    })
+    });
   },
 
-  reportReview: function (req, res) {
+  reportReview(req, res) {
     models.reportReview(req, res, (err) => {
       if (err) {
         res.status(500).send(err);
       } else {
         res.status(204).send();
       }
-    })
-  }
-}
+    });
+  },
+};
