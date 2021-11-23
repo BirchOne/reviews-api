@@ -101,7 +101,7 @@ describe('Post Endpoints', () => {
   it('should create a new post', async () => {
     const res = await request(app)
       .post('/create')
-      .query({
+      .send({
         product_id: 2,
         rating: 3,
         summary: 'This is a test',
@@ -113,6 +113,5 @@ describe('Post Endpoints', () => {
         characteristics: {"5": 2},
       })
     expect(res.statusCode).toEqual(201)
-    // expect(res.body).toHaveProperty('post')
   })
 })

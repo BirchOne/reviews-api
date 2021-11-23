@@ -161,7 +161,6 @@ module.exports = {
   },
 
   postReview(req, res, callback) {
-    console.log('TESTTTTT!!!: ' + JSON.stringify(req.body))
     const {
       product_id, rating, recommend, photos, characteristics
     } = req.body;
@@ -175,8 +174,6 @@ module.exports = {
     let queryString = `INSERT INTO
       reviews (product_id, rating, summary, body, recommend, reviewer_name, reviewer_email)
       VALUES (${product_id}, ${rating}, '${summary}', '${body}', ${recommend}, '${name}', '${email}')`;
-
-      console.log(queryString)
 
     connection.query(queryString, (err) => {
       if (err) {
