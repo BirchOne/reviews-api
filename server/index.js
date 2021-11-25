@@ -26,7 +26,7 @@ app.put('/:review_id/report', (req, res) => {
 });
 
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(8080);
+  app.listen(3000);
 }
 
 module.exports = app;
