@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "server-dev": "NODE_ENV=development nodemon /Users/jonhi1/Desktop/SDC/reviews-api/server/index.js",
+    "server": "nodemon server",
     "test": "NODE_ENV=test jest  --detectOpenHandles",
     "test:watch": "NODE_ENV=test jest --watch",
     "load-test": "k6 run -u 10 -d 30s script.js"
@@ -25,6 +25,7 @@
     "express": "^4.17.1",
     "jest": "^27.3.1",
     "mysql2": "^2.3.3",
+    "nodemon": "^2.0.15",
     "supertest": "^6.1.6"
   },
   "devDependencies": {
