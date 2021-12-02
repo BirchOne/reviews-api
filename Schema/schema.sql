@@ -49,7 +49,9 @@ CREATE TABLE photos (
 );
 
 CREATE INDEX product_id_idx ON reviews (product_id);
+CREATE INDEX product_id_idx ON characteristics (product_id);
 CREATE INDEX review_id_idx ON photos (review_id);
+CREATE INDEX characteristic_id_idx ON characteristic (characteristic_id);
 
 -- INSERT INTO reviews(product_id, rating, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness)
 --   VALUES(2, 5, 'This is a test', 'And I liked it', true, false, 'jonhirak', 'jonhirak@email.com', 'I hope it worked!', 4);
