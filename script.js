@@ -10,7 +10,7 @@ export let options = {
 }
 
 export default function() {
-  let res = http.get("http://localhost:8080/?product_id=2");
+  let res = http.get("http://localhost:3000/meta?product_id=2");
   check(res, {
     "is status 200": (r) => r.status === 200
   });
