@@ -41,7 +41,7 @@ const PhotoSchema = mongoose.Schema({
   _id: Number,
   url: String,
   review: [{type: Schema.Types.ObjectId, ref: 'Review'}]
-})
+});
 
 const Product = mongoose.model('Product', ProductSchema);
 const Characteristic = mongoose.model('Characteristic', CharacteristicSchema);

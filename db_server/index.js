@@ -3,7 +3,6 @@ const controllers = require('./controllers');
 
 const app = express();
 app.use(express.json());
-// app.use(express.urlencoded());
 
 app.get('/', (req, res) => {
   controllers.getReviews(req, res);
@@ -27,6 +26,6 @@ app.put('/:review_id/report', (req, res) => {
 
 if (process.env.NODE_ENV !== 'test') {
   app.listen(3000);
-}
+};
 
 module.exports = app;

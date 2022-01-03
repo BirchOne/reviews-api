@@ -1,7 +1,3 @@
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable camelcase */
-/* eslint-disable no-shadow */
-/* eslint-disable no-param-reassign */
 const { connection } = require('./db');
 
 module.exports = {
@@ -146,8 +142,6 @@ module.exports = {
               valueTracker[characteristic.name].count += 1;
               valueTracker[characteristic.name].sum += characteristic.value;
             });
-
-            // eslint-disable-next-line guard-for-in
             for (const key in valueTracker) {
               const avg = valueTracker[key].sum / valueTracker[key].count;
               response.characteristics[key].value = `${avg}`;
@@ -188,7 +182,6 @@ module.exports = {
             if (Object.keys(characteristics).length > 0) {
               const constructCharQuery = function (characteristics) {
                 const values = [];
-                // eslint-disable-next-line guard-for-in
                 for (const key in characteristics) {
                   values.push(`(${key}, ${review_id}, ${characteristics[key]})`);
                 }
