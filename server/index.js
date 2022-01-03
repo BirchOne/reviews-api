@@ -3,12 +3,11 @@ const axios = require('axios');
 
 const app = express();
 app.use(express.json());
-// app.use(express.urlencoded());
+app.use(express.urlencoded());
 
 const baseUrl = "http://3.133.59.46";
 
 app.get('/', (req, res) => {
-  // controllers.getReviews(req, res);
   const { product_id, page, count } = req.query;
 
   axios
@@ -28,7 +27,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/meta', (req, res) => {
-  const {product_id} = req.query
+  const {product_id} = req.query;
 
   axios
     .get(`${baseUrl}/meta`, {
